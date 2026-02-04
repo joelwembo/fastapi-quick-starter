@@ -29,9 +29,12 @@ async def health_check():
 
 
 @app.get("/fetch/{url:path}")
-async def fetch_url(url: str):
+def fetch_url(url: str):
     """
     Example endpoint that uses the requests library to fetch data from an external URL.
+    
+    Note: This is a demonstration endpoint. In production, implement proper URL validation
+    and security measures to prevent SSRF attacks.
     
     Args:
         url: The URL to fetch (without http:// or https://)
@@ -39,6 +42,11 @@ async def fetch_url(url: str):
     Returns:
         Information about the HTTP request
     """
+    # Basic SSRF protection: block private IP ranges and localhost
+    blocked_patterns = ["127.0.0.1", "localhost", "0.0.0.0", "169.254", "10.", "172.16", "192.168"]
+    if any(pattern in url.lower() for pattern in blocked_patterns):
+        return {"error": "Access to this URL is not allowed"}
+    
     try:
         full_url = f"https://{url}"
         response = requests.get(full_url, timeout=5)
@@ -48,11 +56,8 @@ async def fetch_url(url: str):
             "headers": dict(response.headers),
             "content_length": len(response.content)
         }
-    except Exception as e:
-        return {
-            "error": str(e),
-            "url": url
-        }
+    except Exception:
+        return {"error": "Failed to fetch the requested URL"}
 
 
 if __name__ == "__main__":
