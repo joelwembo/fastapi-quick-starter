@@ -1,0 +1,43 @@
+name: CI Simulation
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Simulate build
+        run: |
+          echo "Installing dependencies..."
+          echo "Running linters..."
+          echo "Building application..."
+          echo "Build simulation complete."
+
+  run:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Simulate application run
+        run: |
+          echo "Starting application..."
+          echo "Running smoke checks..."
+          echo "Application run simulation complete."
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: run
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Simulate deploy
+        run: |
+          echo "Preparing deployment..."
+          echo "Deploying to staging environment..."
+          echo "Deployment simulation complete."
