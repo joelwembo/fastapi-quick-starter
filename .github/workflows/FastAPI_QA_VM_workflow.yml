@@ -1,0 +1,48 @@
+name: FastAPI QA VM Pipeline
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Simulate QA build
+        run: |
+          echo "=== FastAPI QA / ML stack ==="
+          echo "pip install -r requirements.txt"
+          echo "pytest"
+          echo "Build simulation complete."
+
+  run:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Simulate application run
+        run: |
+          echo "Starting FastAPI / ML service..."
+          echo "Health: OK"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: run
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Simulate deploy to QA VM
+        run: |
+          echo "Deploying to QA VM (Docker)..."
+          echo "Deployment simulation complete."
